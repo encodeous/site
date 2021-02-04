@@ -1,0 +1,28 @@
+﻿@using Excubo.Blazor.Canvas
+@using Excubo.Blazor.Canvas.Contexts
+@using site.Client.Services
+@inject IJSRuntime JSR
+@inject BrowserResizeService brs
+<canvas id="bgCanvas" class="fullscreen" style="@ColorStyle">
+
+</canvas>
+@code {
+    [Parameter]
+    public string Color { get; set; }
+
+    private string ColorStyle
+    {
+        get { return "background: " + Color + "; position: absolute; z-index: -1"; }
+    }
+
+    [Parameter]
+    public string StrokeColor { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSR.InvokeVoidAsync("Init", StrokeColor);
+        }
+    }
+    
+}

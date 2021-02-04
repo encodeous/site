@@ -1,0 +1,37 @@
+﻿.bottom-text{
+    font-family: 'Raleway', serif;
+    bottom: 50px;
+    right: 80px;
+    position: absolute;
+    font-weight: lighter;
+    font-size: 20pt;
+}
+
+#title{
+    font-weight: lighter;
+    font-size: 70pt;
+}
+#subtitle{
+    font-weight: lighter;
+    font-size: 30pt;
+    min-height: 50pt;
+}
+.cursor {
+    color: #d6d5d5;
+    -webkit-animation: blink 1s infinite;
+    height: 5px;
+    width: 30px;
+}
+@-webkit-keyframes blink {
+    0% {
+        background: #d6d5d5
+    }
+
+    50% {
+        background: transparent;
+    }
+
+    100% {
+        background: #d6d5d5
+    }
+}

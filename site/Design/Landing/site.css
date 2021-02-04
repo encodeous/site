@@ -1,0 +1,26 @@
+#title {
+    top: 10px;
+    left: 10px;
+    float: left;
+    padding: 20px;
+    color: whitesmoke;
+}
+
+.fullscreen {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    background-color: #1D1D1D;
+}
+
+body,
+html {
+    font-family: 'Raleway';
+    background-color: whitesmoke;
+    margin: 0;
+    padding: 0;
+}

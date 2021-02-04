@@ -1,0 +1,155 @@
+﻿@page "/"
+@using site.Shared
+<div class="fullscreen">
+    <InteractiveBackground Color="#1D1D1D" StrokeColor="#323232"/>
+    <div id="coverpage" class="fill-div">
+        <div class="bottom-text">
+            About Me
+        </div>
+        <div class="centered">
+            <p id="title">
+                Hey!
+                <br/>
+                I'm <strong>Adam</strong>
+            </p>
+            <MudTooltip Text="@GetTooltip" Delayed="4">
+                <div id="subtitle">
+                    <div style="display: inline-block">
+                        @Subtitle
+                    </div>
+                    <span class="cursor" style="display: inline-block">
+                                    
+                    </span>
+                </div>
+            </MudTooltip>
+        </div>
+    </div>
+</div>
+
+
+@code{
+    int MaxTypos = 0;
+
+    string GetTooltip
+    {
+        get
+        {
+            return "Max Typos: " + MaxTypos;
+        }
+    }
+    string Subtitle;
+    Random rng = new Random();
+    string[] PossibleValues = {
+        "A competitive programmer.", 
+        "A high school student.", 
+        "A developer.",
+        "and I live in Toronto, Canada.",
+        $"and I have been programming for {Math.Round((DateTime.Now - new DateTime(2015,1,1)).Days/30.436875)} months."};
+    
+    protected override void OnInitialized()
+    {
+        Task.Run(async () =>
+        {
+            while (true)
+            {
+                PossibleValues.Shuffle();
+                foreach (string s in PossibleValues)
+                {
+                    await AnimateTitle(s);
+                    await Task.Delay(rng.Next(5000, 8000));
+                    await Reset();
+                    await Task.Delay(rng.Next(1000, 2000));
+                }
+            }
+        });
+    }
+
+    private async Task Reset()
+    {
+        while (Subtitle.Length != 0)
+        {
+            Subtitle = Subtitle.Substring(0, Subtitle.Length - 1);
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(rng.Next(20, 50));
+        }
+    }
+    
+    private async Task AnimateTitle(string s)
+    {
+        int currentErrors = 0;
+        Stack<char> inputStack = new Stack<char>();
+        Stack<(char, bool)> realStack = new Stack<(char, bool)>();
+        int error = 0;
+        foreach (char c in s.Reverse())
+        {
+            inputStack.Push(c);
+        }
+        while (inputStack.Count != 0 || error != 0)
+        {
+            if (inputStack.Count > 0)
+            {
+                char c = inputStack.Pop();
+                Subtitle += c;
+                realStack.Push((c,true));
+                await InvokeAsync(StateHasChanged);
+                await Task.Delay(rng.Next(20, 100));
+                if (rng.Next(1, 20) == 1)
+                {
+                    char typo = GetTypo(c);
+                    Subtitle += typo;
+                    realStack.Push((typo, false));
+                    error++;
+                    currentErrors++;
+                    MaxTypos = Math.Max(MaxTypos, currentErrors);
+                    await InvokeAsync(StateHasChanged);
+                    await Task.Delay(rng.Next(20, 100));
+                }
+            }
+            if (error != 0 && rng.Next(1, 4) == 1)
+            {
+                while (error != 0)
+                {
+                    var k = realStack.Pop();
+                    if (k.Item2)
+                    {
+                        inputStack.Push(k.Item1);
+                        Subtitle = Subtitle.Substring(0, Subtitle.Length - 1);
+                    }
+                    else
+                    {
+                        error--;
+                        Subtitle = Subtitle.Substring(0, Subtitle.Length - 1);
+                        await Task.Delay(rng.Next(20, 300));
+                    }
+                    await InvokeAsync(StateHasChanged);
+                    await Task.Delay(rng.Next(20, 100));
+                }
+            }
+        }
+        MaxTypos = Math.Max(MaxTypos, currentErrors);
+    }
+    string[] keyboard = new[] { "qwertyuiop", "asdfghjkl", "zxcvbnm" };
+    private char GetTypo(char c)
+    {
+        // simulate a typo
+        if (!char.IsLetter(c)) return c;
+        for (int i = 0; i < 3; i++)
+        {
+            if (keyboard[i].Contains(char.ToLower(c)))
+            {
+                int idx = keyboard[i].IndexOf(char.ToLower(c));
+                while (true)
+                {
+                    // Generate realistic typos
+                    int ni = rng.Next(-1, 2) + i;
+                    int nidx = rng.Next(-1, 2) + idx;
+                    if (ni >= 0 && ni < 3 && nidx >= 0 && nidx < keyboard[ni].Length && keyboard[ni][nidx] != c)
+                    {
+                        return keyboard[ni][nidx];
+                    }
+                }
+            }
+        }
+        return c;
+    }
+}

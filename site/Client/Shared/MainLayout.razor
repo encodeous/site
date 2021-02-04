@@ -1,0 +1,39 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Nav
+<MudThemeProvider Theme="Theme" />
+
+<MudAppBar Elevation="1" Color="Color.Primary" Dense="true">
+    <a @onclick="@(()=>Nav.NavigateTo("/"))" class="app-bar-text" href="/">
+        Adam Chen
+    </a>
+    <MudAppBarSpacer/>
+    <MudButton OnClick="@(()=>Nav.NavigateTo("/projects"))">
+        Projects
+    </MudButton>
+    <MudButton OnClick="@(()=>Nav.NavigateTo("/projects"))">
+        Blog
+    </MudButton>
+    <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" OnClick="@(()=>Nav.NavigateTo("https://github.com/encodeous"))"/>
+    <MudIconButton Icon="@Icons.Material.Person" Color="Color.Inherit" OnClick="@(()=>Nav.NavigateTo("/login"))"/>
+</MudAppBar>
+
+@Body
+
+@code{
+    MudTheme Theme = new()
+    {
+        Palette = new Palette()
+        {
+            Primary = Colors.Grey.Darken3,
+            Secondary = Colors.Blue.Accent2,
+            TextPrimary = Colors.Shades.White,
+        }
+    };
+    
+    bool open = false;
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+}
